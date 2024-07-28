@@ -1,30 +1,31 @@
 // (c) 2018 Max Apodaca
 // This code is licensed under MIT license (see LICENSE for details)
 
-var Label = require('./Label.js');
-var Instruction = require('./Instruction.js');
-var Assembly = require('./Assembly.js');
+import Label from './Label.js';
+import Instruction from './Instruction.js';
+import Assembly from './Assembly.js';
 
-function parser(assemblyCode){
+function parser(assemblyCode, breakpoints) {
   let assembly = new Assembly();
+  let breakpointMap = [];
+  let lineMap = [];
 
   let lines = assemblyCode.split('\n');
-  for(let i = 0; i<lines.length; i++){
+  for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
-    while(line.indexOf(':') !== -1){
-        let labels = line.split(":", 2);
-        line = (labels.length > 1) ? labels[1].trim() : "";
-        let labelName = labels[0];
-        console.log(labels);
-        let address = assembly.getInstructions().length;
-        let label = new Label(labelName, address);
-        assembly.addLabel(label);
+    while (line.indexOf(':') !== -1) {
+      let labels = line.split(":", 2);
+      line = (labels.length > 1) ? labels[1].trim() : "";
+      let labelName = labels[0];
+      let address = assembly.getInstructions().length;
+      let label = new Label(labelName, address);
+      assembly.addLabel(label);
     }
-    if(line === "" || line.charAt(0) === '*'){
+    if (line === "" || line.charAt(0) === '*') {
       continue;
     }
     let parts = line.split(" ");
-    if(parts.length < 1){
+    if (parts.length < 1) {
       console.log("error while parsing assembly");
       return false;
     }
@@ -32,9 +33,13 @@ function parser(assemblyCode){
     let data = (parts.length > 1) ? parts[1] : "0";
     let instruction = new Instruction(command, data);
     assembly.addInstruction(instruction);
+    if(breakpoints[i]){
+      breakpointMap[assembly.getInstructions().length - 1] = true;
+    }
+    lineMap[assembly.getInstructions().length - 1] = i;
   }
 
-  return assembly;
+  return [assembly, breakpointMap, lineMap];
 }
 
-module.exports = parser;
+export default parser;

@@ -2,49 +2,49 @@
 // This code is licensed under MIT license (see LICENSE for details)
 
 class Assembly {
-  constructor(){
+  constructor() {
     this.instructions = [];
     this.labelMap = [];
     this.labels = [];
   }
 
-  addLabel(label){
+  addLabel(label) {
     this.labelMap[label.getName()] = label;
     this.labels.push(label);
   }
 
-  addInstruction(instruction){
+  addInstruction(instruction) {
     this.instructions.push(instruction);
   }
 
-  getInstructions(){
+  getInstructions() {
     return this.instructions;
   }
 
-  getLabelLine(labelName){
-    if(this.labelMap[labelName]){
+  getLabelLine(labelName) {
+    if (this.labelMap[labelName]) {
       return this.labelMap[labelName].getLine();
     }
     console.log("Label " + labelName + " not found.");
   }
 
-  getLabelsForInstruction(line){
+  getLabelsForInstruction(line) {
     let labels = [];
-    for(let label of this.labels){
-      if(label.getLine() === line){
+    for (let label of this.labels) {
+      if (label.getLine() === line) {
         labels.push(label);
       }
     }
     return labels;
   }
 
-  toString(){
+  toString() {
     let returnString = "";
-    for(let i = 0; i<this.instructions.length; i++){
+    for (let i = 0; i < this.instructions.length; i++) {
       let instruction = this.instructions[i];
       let labels = this.getLabelsForInstruction(i);
       returnString += (i) + ": ";
-      for(let label of labels){
+      for (let label of labels) {
         returnString += label.toString() + " ";
       }
       returnString += instruction.toString() + "\n";
@@ -52,18 +52,18 @@ class Assembly {
     return returnString;
   }
 
-  getBytes(){
+  getBytes() {
     let bytes = new Uint8Array(this.instructions.length * 2);
-    for(let i = 0; i<this.instructions.length; i++){
+    for (let i = 0; i < this.instructions.length; i++) {
       let instruction = this.instructions[i];
-      if(instruction.needsEval){
+      if (instruction.needsEval) {
         let line = this.getLabelLine(instruction.getData());
         instruction.evalData(line);
       }
-      bytes.set(instruction.getBytes(), i*2);
+      bytes.set(instruction.getBytes(), i * 2);
     }
     return bytes;
   }
 }
 
-module.exports = Assembly;
+export default Assembly;

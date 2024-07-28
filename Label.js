@@ -2,22 +2,22 @@
 // This code is licensed under MIT license (see LICENSE for details)
 
 class Label {
-  constructor(name, line){
+  constructor(name, line) {
     this.name = name;
     this.line = line;
   }
 
-  getName(){
+  getName() {
     return this.name;
   }
 
-  getLine(){
+  getLine() {
     return this.line;
   }
 
-  toString(){
+  toString() {
     return this.name + ": ";
   }
 }
 
-module.exports = Label;
+export default Label;
